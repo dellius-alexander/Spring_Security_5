@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This rule is at the heart of logback. It assumes that levels are ordered as follows:
+TRACE < DEBUG < INFO <  WARN < ERROR.
+In the following table, the vertical header shows the level of the logging request,
+designated by p, while the horizontal header shows effective level of the logger,
+designated by q. The intersection of the rows (level request) and columns (effective level)
+is the boolean resulting from the basic selection rule.
+level of
+request p 	    effective level q
+        TRACE 	DEBUG 	INFO 	WARN 	ERROR		OFF
+TRACE 	YES 	  NO 	    NO 	  NO 	  NO 	    NO
+DEBUG 	YES 	  YES 	  NO 	  NO 	  NO 	    NO
+INFO 	  YES 	  YES 	  YES 	NO 	  NO 	    NO
+WARN 	  YES 	  YES 	  YES 	YES 	NO 	    NO
+ERROR 	YES 	  YES 	  YES 	YES 	YES 	  NO
+ -->
+
+<configuration>
+    <!-- Insert the current time formatted as "yyyyMMdd'T'HHmmss" under
+         the key "dateTimeFormat" into the logger context. This value will be
+         available to all subsequent configuration elements. -->
+    <timestamp key="dateTimeFormat" datePattern="yyyyMMdd'T'HHmm"/>
+    <!-- Assign a LOG_DIR property -->
+    <property name="LOG_DIR" value="data/logs"/>
+    <!-- File pattern   -->
+    <property name="file_pattern" value="dev_spring_security_5" />
+    <!-- ROLLING FILE APPENDER -->
+    <appender
+            name="FIX_WINDOW_BASED_FILE"
+            class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/${file_pattern}_${dateTimeFormat}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/${file_pattern}_${dateTimeFormat}_%i.log</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>5</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>100MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{HH:mm:ss.SSS} [%t] [%highlight(%-5level)] [%cyan(%logger{10}.%M)][%L] |- %msg %n</pattern>
+        </encoder>
+        <prudent>false</prudent>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+    </appender>
+
+    <!-- FILE APPENDER -->
+    <!-- <appender name="FILE" class="ch.qos.logback.core.FileAppender"> -->
+    <!-- use the previously created timestamp to create a uniquely
+         named log file -->
+    <!-- <file>${LOG_DIR}/lendit_book_kiosk_${dateTimeFormat}.log</file>
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%t] [%-5level] [%logger{10}.%M][%L] |- %msg%n</pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <level>DEBUG</level>
+    </filter>
+  </appender> -->
+
+    <!-- CONSOLE APPENDER -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <withJansi>false</withJansi>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{HH:mm:ss.SSS} [%t] [%highlight(%-5level)] [%cyan(%logger{10}.%M)][%L] |- %msg %n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+    <!-- Add ALL appenders to your root logger -->
+    <root level="DEBUG">
+        <appender-ref ref="FIX_WINDOW_BASED_FILE" />
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>
