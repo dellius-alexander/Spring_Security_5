@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+    <!-- Spring Configuration -->
+    <servlet>
+        <servlet-name>spring</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>spring</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+<!--    <filter>-->
+<!--        <filter-name>springSecurityFilterChain</filter-name>-->
+<!--        <filter-class>javax.servlet.Filter</filter-class>-->
+<!--    </filter>-->
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            /resources/servlet.xml
+            /resources/security.xml
+            /resources/saml/saml.xml
+        </param-value>
+    </context-param>
+
+    <error-page>
+        <exception-type>javax.servlet.ServletException</exception-type>
+        <location>/error.html</location>
+    </error-page>
+</web-app>

@@ -1,0 +1,95 @@
+################################################################################
+#   LOGGING
+################################################################################
+logging.level:
+  org.springframework.security: TRACE
+################################################################################
+#  Application Server Configuration file
+################################################################################
+# Change server port
+server:
+  port: 8443
+#  servlet:
+#    context-path: /
+  ssl:
+    enabled: true
+    key-alias: spring
+    key-store: classpath:saml/keystore.jks
+    key-store-password: secret
+  tomcat: # Maximum amount of worker threads
+    threads:
+      max: 200
+################################################################################
+##  Spring Security Configuration
+################################################################################
+security:
+  saml2:
+    metadata-url: https://dev-08146351.okta.com/app/dev-08146351_springsecurity5_1/exk5dkpdfrUsmbWAO5d7/sso/saml
+    relyingparty:
+      registration:
+        okta: # https://dev-08146351-admin.okta.com/admin/getting-started
+          identityprovider:
+            entity-id: http://www.okta.com/exk5dkpdfrUsmbWAO5d7
+            verification.credentials:
+              - certificate-location: "classpath:saml/okta.cert"
+            singlesignon.url: https://dev-08146351.okta.com/app/dev-08146351_springsecurity5_1/exk5dkpdfrUsmbWAO5d7/sso/saml
+            singlesignon.sign-request: false
+################################################################################
+##  Spring Configuration
+################################################################################
+## See Documentation:
+## https://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/Hibernate_User_Guide.html#configurations-hbmddl
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  mvc:
+    view:
+      prefix: classpath:/WEB-INF/views/
+      suffix: .jsp
+  jpa:
+    open-in-view: true
+    properties:
+      # 24.15. Automatic schema generation
+      # Setting to perform SchemaManagementTool actions automatically as part of the SessionFactory lifecycle.
+      # Valid options are defined by the externalHbm2ddlName value of the Action enum:
+      ## (e.g. none (default value), create-only, drop, create, create-drop, validate, and update)
+      hibernate:
+        hbm2ddl:
+          create_namespaces: true
+          auto: update
+      javax:
+        persistence:
+          # Setting to perform SchemaManagementTool actions automatically as part of the SessionFactory lifecycle.
+          # Valid options are defined by the externalHbm2ddlName value of the Action enum:
+          schema-generation:
+            create-database-schemas: true
+            database:
+              # (e.g. none (default value), create-only, drop, create, create-drop, validate, and update)
+              action: update
+              # Specifies the drop script file as either a java.io.Reader configured for reading of the
+              # DDL script file or a string designating a file java.net.URL for the DDL script.
+            scripts:
+              create-target: SQL/entrypoint/create_schema.sql
+              # For cases where the javax.persistence.schema-generation.scripts.action value
+              # indicates that schema dropping commands should be written to DDL script file,
+              # javax.persistence.schema-generation.scripts.drop-target specifies either a
+              # java.io.Writer configured for output of the DDL script or a string specifying the file URL for the DDL script.
+              drop-target: SQL/entrypoint/drop_schema.sql
+              # Setting to perform SchemaManagementTool actions writing the commands into a DDL script file.
+              # Valid options are defined by the externalJpaName value of the Action enum:
+              # (e.g. none (default value), create-only, drop, create, create-drop, validate, and update)
+              action: update
+              # Specifies whether schema generation commands for schema creation are to be determined
+              # based on object/relational mapping metadata, DDL scripts, or a combination of the two.
+              # See SourceType for valid set of values.
+              # If no value is specified, a default is assumed as follows:
+              #   if source scripts are specified (per javax.persistence.schema-generation.create-script-source /
+              #   javax.persistence.schema-generation.drop-script-source should be preferred),
+              create-script-source: SQL/entrypoint/create_schema.sql
+              drop-script-source: SQL/entrypoint/drop_schema.sql
+              # then script is assumed otherwise, metadata is assumed
+              create-source: script_then_metadata
+              # Specifies whether schema generation commands for schema dropping are to be determined
+              # based on object/relational mapping metadata, DDL scripts, or a combination of the
+              # two. See SourceType for valid set of values.
+              drop-source: script_then_metadata

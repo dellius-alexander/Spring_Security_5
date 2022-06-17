@@ -1,8 +1,10 @@
 pluginManagement {
 	repositories {
-		maven { url 'https://repo.spring.io/milestone' }
-		maven { url 'https://repo.spring.io/snapshot' }
+		mavenCentral()
 		gradlePluginPortal()
+		maven { url "https://repo.spring.io/milestone" }
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://build.shibboleth.net/nexus/content/repositories/releases/" }
 	}
 }
-rootProject.name = 'Spring_Security_5'
+rootProject.name = 'spring_security_web_service'

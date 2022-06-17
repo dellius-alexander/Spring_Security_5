@@ -50,7 +50,13 @@ index.html
 </head>
 <body>
     <nav></nav>
-    <header></header>
+    <header>
+        <div>
+            <form th:action="@{/logout}" method="post">
+                <input type="submit" value="Logout" />
+            </form>
+        </div>
+    </header>
     <main
             sec:authorize="isAuthenticated()"
             th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_USER'')')}"
